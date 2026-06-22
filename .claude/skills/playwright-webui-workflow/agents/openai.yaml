@@ -1,0 +1,4 @@
+interface:
+  display_name: "Playwright WebUI Workflow"
+  short_description: "Web UI 調査を mode 別に安全に進める"
+  default_prompt: "Use $playwright-webui-workflow to choose the mode first, prefer CDP for logged-in browsers, validate the source-to-field contract before form input, normalize aliases, choose verification by widget type, separate schema mismatch from selector failure, and stop once enough evidence is collected."

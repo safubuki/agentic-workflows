@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Update"
+  short_description: "Collect and update workspace skills into turtle-skills-neo."
+  default_prompt: "スキルアップデートを実行して、ワークスペース内の .agents/skills・.claude/skills・.github/skills を turtle-skills-neo に集約してください。"
