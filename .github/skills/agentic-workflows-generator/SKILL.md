@@ -1,23 +1,24 @@
 ---
-name: agentic-workflows
-description: GitHub Agentic Workflows（gh-aw）を作成・更新・コンパイル・解説する汎用スキル。Markdown で書いたワークフロー定義（フロントマター+本文）から、AI が実行可能な GitHub Actions（.lock.yml）を生成する仕組みを支援する。新規ワークフロー作成、既存ワークフローの更新、`gh aw compile` 補助、フロントマター/safe-outputs/エンジン設定の解説、現状のワークフロー内容の説明に対応。「Agentic Workflowを作って」「ワークフロー作成」「gh-aw」「gh aw」「エージェントワークフロー」「AIワークフロー」「ワークフロー更新」「ワークフローをコンパイル」「ワークフローを解説」「workflow_dispatch」「safe-outputs」「frontmatter」「lock.yml」「agentic workflow」などで発火。
+name: agentic-workflows-generator
+description: GitHub Agentic Workflows（gh-aw）を生成・更新・コンパイル・解説・セットアップ支援する生成スキル。Markdown のワークフロー定義（フロントマター+本文）から AI 実行可能な GitHub Actions（.lock.yml）を生成する。新規生成・既存更新・`gh aw compile` 補助・フロントマター/safe-outputs/エンジン/モデル/認証の解説・現状ワークフローの説明に対応。会社（組織）か個人かなど判断が分かれる箇所は推測せずユーザーに確認・選択させる。「Agentic Workflowを作って」「ワークフロー作成」「ワークフロー生成」「gh-aw」「gh aw」「エージェントワークフロー」「AIワークフロー」「ワークフロー更新」「ワークフローをコンパイル」「workflow_dispatch」「safe-outputs」「frontmatter」「lock.yml」「gh aw セットアップ」「copilot-requests」などで発火。
 ---
 
-# Agentic Workflows スキル — gh-aw の作成・更新・コンパイル・解説
+# Agentic Workflows Generator — gh-aw の生成・更新・コンパイル・解説・セットアップ
 
 ## スキル読み込み通知
 
 このスキルが読み込まれたら、必ず以下の通知をユーザーに表示してください：
 
-> 🤖 **Agentic Workflows スキルを読み込みました**  
-> GitHub Agentic Workflows（gh-aw）の作成・更新・コンパイル・解説を行います。
+> 🤖 **Agentic Workflows Generator スキルを読み込みました**  
+> GitHub Agentic Workflows（gh-aw）の生成・更新・コンパイル・解説・セットアップを支援します。判断が分かれる箇所では確認させていただきます。
 
 ## When to Use
 
 - 新しい Agentic Workflow を作りたいとき（「PR をレビューするワークフローを作って」など）
 - 既存のワークフローを更新・修正したいとき
 - ワークフローのコンパイル（`gh aw compile` → `.lock.yml`）を行いたいとき
-- フロントマター・safe-outputs・エンジン設定・トリガーの書き方が分からないとき
+- gh / gh aw のセットアップ・認証（組織 or 個人）でつまずいたとき
+- フロントマター・safe-outputs・エンジン/モデル・認証設定の書き方が分からないとき
 - 現状リポジトリにある Agentic Workflow の内容を説明してほしいとき
 - 「こんな自動化を Actions × AI でやりたい」と漠然と相談したいとき
 
@@ -26,17 +27,38 @@ description: GitHub Agentic Workflows（gh-aw）を作成・更新・コンパ�
 GitHub Agentic Workflows は、**自然言語（Markdown）で書いた指示を AI エージェントが GitHub Actions 上で実行する仕組み**です。
 `.github/workflows/<名前>.md` に **フロントマター（YAML 設定）** と **本文（自然言語の指示）** を書き、`gh aw compile` でコンパイルすると、堅牢化された GitHub Actions ワークフロー `.lock.yml` が生成されます。
 
-このスキルは5つのモードで動作します。
+このスキルは6つのモードで動作します。
 
 | モード | 説明 | トリガー例 |
 |--------|------|-----------|
-| 🔨 **Create** | 新しいワークフローを作成 | 「〜するワークフローを作って」 |
+| 🔨 **Create** | 新しいワークフローを生成 | 「〜するワークフローを作って」 |
 | ✏️ **Update** | 既存ワークフローを更新 | 「このワークフローに〜を追加して」 |
 | ⚙️ **Compile** | コンパイル（.lock.yml 生成）を支援 | 「コンパイルして」「lock を更新」 |
 | 📖 **Explain** | 仕組み・記法を解説 | 「safe-outputs って何」「frontmatter の書き方」 |
 | 🔍 **Describe** | 現状のワークフロー内容を説明 | 「今あるワークフローを説明して」 |
+| 🧰 **Setup** | gh / gh aw 導入・認証の支援 | 「gh aw を入れたい」「認証どうする」 |
 
-> 📚 まず仕様を確認すべきときは、リポジトリの [docs/](../../../docs/) のマニュアル（`docs/01`〜`docs/06`）を参照してください。本スキルの `references/` はその要点を凝縮したものです。
+> 📚 まず仕様を確認すべきときは、リポジトリの [docs/](../../../docs/) のマニュアル（`docs/01`〜`docs/06`、`docs/references/`）を参照してください。本スキルの `references/` はその要点を凝縮したものです。
+
+---
+
+## ⚠️ 判断確認の原則（全モード共通・最重要）
+
+このスキルは、**判断が分かれる箇所では推測で進めず、必ずユーザーに確認・選択させます**。
+特に **会社（組織）で使うのか／個人で使うのか**で正解が変わる項目（認証方式・課金・シークレット運用など）は、勝手に決めてはいけません。
+
+確認すべき分岐点の一覧・各選択肢・推奨デフォルトは以下を参照：
+
+📄 **[references/decision-points.md](references/decision-points.md)**
+
+運用ルール：
+
+1. 分岐点に来たら、`references/decision-points.md` の該当項目の**選択肢を提示して質問**する（推奨があれば「推奨」と明示）。
+2. ユーザーが選んだら、その選択に沿って続行する。**選択を勝手に変えない**。
+3. 一度確認した内容（例: 「組織利用」）は、同じセッション内では繰り返し聞かない。
+4. 破壊的・外向きの操作（シークレット登録、`workflow disable/enable`、push 等）は、実行前に確認する。
+
+> 💡 代表例: 「Copilot の認証どうする？」と聞かれたら、**組織なら `copilot-requests: write`（シークレット不要・推奨）／個人なら `COPILOT_GITHUB_TOKEN`** の2択を提示し、どちらの利用形態かを確認してから進める。
 
 ---
 
@@ -44,14 +66,17 @@ GitHub Agentic Workflows は、**自然言語（Markdown）で書いた指示を
 
 ### Step 1: 要件のヒアリング
 
-ユーザーから以下を確認する（不明な点は推測せず質問する）。
+ユーザーから以下を確認する（不明な点は推測せず質問する）。**判断が分かれる項目は [references/decision-points.md](references/decision-points.md) に従って選択肢を提示して確認する。**
 
 1. **目的**: 何を自動化したいか（PR レビュー、Issue トリアージ、README 更新など）
-2. **トリガー**: いつ起動するか（手動 `workflow_dispatch` / `push` / `pull_request` / `issues` / `schedule`）
-3. **入力**: 手動実行なら、どの入力（PR 番号・モデル選択・回数など）が必要か
-4. **エンジン・モデル**: 既定は `engine: copilot`。モデルは採用4種（`claude-sonnet-4.6` / `gpt-5.4` / `gpt-5.3-codex` / `claude-haiku-4.5`）から用途に応じて選ぶ（→ [references/model-policy.md](references/model-policy.md)）
-5. **書き込み**: AI に何をさせるか（コメント投稿・PR 作成・ラベル付与など → safe-outputs を選定）
-6. **状態の永続化**: 実行間でカウントや前回結果を持ち越す必要があるか（→ ラベル/コメント/Issue を使う）
+2. **利用形態（会社/組織 か 個人 か）**: 認証・課金・シークレット運用が変わるため**必ず確認**（→ [decision-points.md](references/decision-points.md) §1）
+3. **トリガー**: いつ起動するか（手動 `workflow_dispatch` / `push` / `pull_request` / `issues` / `schedule`）。`schedule` は放置で動くため自動実行の是非も確認（§3）
+4. **入力**: 手動実行なら、どの入力（PR 番号・モデル選択・回数など）が必要か
+5. **エンジン・モデル**: 既定は `engine: copilot`。モデルは採用4種から用途に応じて選ぶ（固定 or 選択も確認 → §2、[model-policy.md](references/model-policy.md)）
+6. **書き込み**: AI に何をさせるか（コメント投稿・PR 作成・ラベル付与など → safe-outputs を選定。変更系は PR 提案が安全 → §4）
+7. **状態の永続化**: 実行間でカウントや前回結果を持ち越す必要があるか（→ §5、ラベル/コメント/Issue を使う）
+
+> 💡 各分岐で迷ったら、決め打ちせず「A/B どちらにしますか？（推奨: …）」と聞く。一度確認した内容は同一セッションで繰り返し聞かない。
 
 ### Step 2: フロントマターの設計
 
@@ -182,11 +207,14 @@ CLI コマンドの詳細は以下を参照：
 | 「frontmatter の書き方」 | [references/frontmatter-reference.md](references/frontmatter-reference.md) |
 | 「safe-outputs とは / 一覧」 | [references/safe-outputs-reference.md](references/safe-outputs-reference.md) |
 | 「エンジン・モデルの指定方法 / どのモデルを使う」 | [references/model-policy.md](references/model-policy.md) |
+| 「認証はどうする / 組織と個人の違い / `copilot-requests`」 | [references/auth-and-secrets.md](references/auth-and-secrets.md) |
+| 「`gh auth login` 済みなのにシークレットが要るのはなぜ」 | [references/auth-and-secrets.md](references/auth-and-secrets.md)（2レイヤー） |
 | 「回数カウント・状態の持ち方」 | [references/state-persistence-patterns.md](references/state-persistence-patterns.md) |
 | 「コンパイルでエラー/警告が出る」 | [references/compile-pitfalls.md](references/compile-pitfalls.md) |
+| 「gh / gh aw のセットアップ」 | [references/setup-guide.md](references/setup-guide.md) |
 | 「gh aw コマンド」 | [references/cli-commands.md](references/cli-commands.md) |
 
-回答は簡潔に、必要なら最小の YAML 例を添える。深掘りが必要なら該当ドキュメントへ誘導する。
+回答は簡潔に、必要なら最小の YAML 例を添える。**判断が分かれる質問（認証など）には、決め打ちで答えず選択肢を提示**する（[decision-points.md](references/decision-points.md)）。深掘りが必要なら該当ドキュメントへ誘導する。
 
 ---
 
@@ -205,22 +233,43 @@ CLI コマンドの詳細は以下を参照：
 
 ---
 
+## Mode 6: Setup — gh / gh aw 導入・認証支援
+
+### 手順
+
+1. 現状を確認する（`gh --version` / `gh auth status` / `gh aw version`）。何が未導入かを切り分ける。
+2. 不足している段階から順に案内する（gh 本体 → ローカル認証 → gh aw 拡張 → エンジン認証）。詳細は：
+
+   📄 **[references/setup-guide.md](references/setup-guide.md)**
+
+3. **エンジン認証は組織/個人で分岐するため必ず確認**する（[references/decision-points.md](references/decision-points.md) §1）。
+4. `gh auth login`（対話的）や `gh secret set`（トークン入力）は**ユーザー自身に実行してもらう**。トークンはチャットに出させない。
+5. 「ローカル認証」と「エンジン認証（シークレット/権限）」は別物である点を必ず伝える（[references/auth-and-secrets.md](references/auth-and-secrets.md)）。
+
+---
+
 ## 厳守事項（全モード共通）
 
+- **判断が分かれる箇所は推測で進めず確認する**（特に会社/組織 か 個人 か → [references/decision-points.md](references/decision-points.md)）。
 - `.md` 編集後は**必ず再コンパイル**し、`.md` と `.lock.yml` を両方コミットする。
 - AI の書き込みは**宣言済みの safe-outputs のみ**。本文で使うものは必ずフロントマターに宣言する。
 - 最小権限を守る（`permissions` は読み取り中心。ただし `github` ツールに必要な read は宣言する）。
 - 既存ワークフローのスタイル・出力言語を勝手に変えない。
 - エンジンは `copilot`、モデルは採用4種（`claude-sonnet-4.6` / `gpt-5.4` / `gpt-5.3-codex` / `claude-haiku-4.5`）から選ぶ。
+- 複数人開発で**個人トークンを共有シークレットに入れない**（[references/auth-and-secrets.md](references/auth-and-secrets.md)）。
+- 破壊的・外向きの操作（シークレット登録・`workflow disable/enable`・push 等）は実行前に確認する。
 
 ## 参照ドキュメント
 
 | ドキュメント | 内容 |
 |-------------|------|
+| [references/decision-points.md](references/decision-points.md) | **判断確認ポイント一覧**（会社/個人など、ユーザーに選ばせる箇所） |
 | [assets/workflow-template.md](assets/workflow-template.md) | ワークフロー `.md` の作成テンプレート |
 | [references/frontmatter-reference.md](references/frontmatter-reference.md) | フロントマター全項目・エンジン・トリガー早見表 |
 | [references/safe-outputs-reference.md](references/safe-outputs-reference.md) | safe-outputs の種類と書き方 |
 | [references/model-policy.md](references/model-policy.md) | 採用モデル（Copilot エンジン・4種）と指定方法 |
+| [references/auth-and-secrets.md](references/auth-and-secrets.md) | 認証2レイヤー・組織/個人の認証・シークレット運用 |
+| [references/setup-guide.md](references/setup-guide.md) | gh / gh aw 導入・認証のセットアップ手順 |
 | [references/state-persistence-patterns.md](references/state-persistence-patterns.md) | 回数カウント・前回結果引き継ぎ等の状態永続化パターン |
 | [references/compile-pitfalls.md](references/compile-pitfalls.md) | コンパイル検証の落とし穴と回避策（許可式・権限・承認・自動生成） |
 | [references/cli-commands.md](references/cli-commands.md) | `gh aw` CLI コマンドリファレンス |

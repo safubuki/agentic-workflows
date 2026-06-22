@@ -19,7 +19,7 @@
 # 初回のみ
 gh extension install github/gh-aw
 gh aw init
-gh secret set COPILOT_GITHUB_TOKEN   # Copilot エンジン（推奨）の場合
+gh secret set COPILOT_GITHUB_TOKEN   # 個人の場合（組織は permissions: copilot-requests: write が推奨）
 
 # 開発サイクル（編集 → コンパイル → 確認 → コミット）
 # 1. .github/workflows/foo.md を編集

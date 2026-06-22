@@ -34,7 +34,9 @@ gh aw init
 # 4. ワークフローを書く（.github/workflows/*.md）→ コンパイル
 gh aw compile
 
-# 5. シークレットを登録（Copilot エンジン＝推奨）
+# 5. 認証（Copilot エンジン）
+#    組織/複数人（推奨）: ワークフローに permissions: copilot-requests: write を付与（シークレット不要）
+#    個人/自分専用リポジトリ: 下記でトークンをシークレット登録
 gh secret set COPILOT_GITHUB_TOKEN
 
 # 6. .md と .lock.yml を両方コミットしてプッシュ
