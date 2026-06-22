@@ -34,8 +34,8 @@ gh aw init
 # 4. ワークフローを書く（.github/workflows/*.md）→ コンパイル
 gh aw compile
 
-# 5. シークレットを登録（Claude を使う場合）
-gh secret set ANTHROPIC_API_KEY
+# 5. シークレットを登録（Copilot エンジン＝推奨）
+gh secret set COPILOT_GITHUB_TOKEN
 
 # 6. .md と .lock.yml を両方コミットしてプッシュ
 git add .github/workflows/*.md .github/workflows/*.lock.yml
